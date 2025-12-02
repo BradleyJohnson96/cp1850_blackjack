@@ -7,20 +7,29 @@ def display():
 
 def make_bet(money):
     print(f"Money: {money}")
+    if int(money) < 5:
+        more_chips = input("Would you like to by more chips? (y/n)?")
+        if more_chips.lower() == "y":
+            chips = int(input("How many chips would you like?"))
+            money = money + chips
+            return money
+        else:
+            pass
+
     bet = float(input("Bet amount: "))
     return bet
 
 def show_hand(dealers_hand):
-    print("DEALER'S SHOW CARD:")
-    print(dealers_hand)
+    print("\nDEALER'S SHOW CARD:")
+    print(*dealers_hand)
 
 def player_cards(players_hand):
-    print("YOUR CARDS:")
+    print("\nYOUR CARDS:")
     for card in players_hand:
         print(card)
 
 def dealers_cards(dealers_hand):
-    print("DEALER'S CARDS: ")
+    print("\nDEALER'S CARDS: ")
     for card in dealers_hand:
         print(card)
 
@@ -48,10 +57,6 @@ def main():
     player_cards(players_hand)
     #need hit/stand here
     dealers_cards(dealers_hand)
-
-
-
-
 
 
 if __name__=="__main__":
