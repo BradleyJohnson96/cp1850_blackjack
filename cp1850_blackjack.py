@@ -10,6 +10,20 @@ def make_bet(money):
     bet = float(input("Bet amount: "))
     return bet
 
+def show_hand(dealers_hand):
+    print("DEALER'S SHOW CARD:")
+    print(dealers_hand)
+
+def player_cards(players_hand):
+    print("YOUR CARDS:")
+    for card in players_hand:
+        print(card)
+
+def dealers_cards(dealers_hand):
+    print("DEALER'S CARDS: ")
+    for card in dealers_hand:
+        print(card)
+
 def make_deck():
     suits = ["Clubs","Diamonds","Hearts","Spades"]
     ranks = ["Ace","Two","Three","Four","Five","Six","Seven",
@@ -22,19 +36,6 @@ def make_deck():
     random.shuffle(deck)
     return deck
 
-# def player_score(players_hand):
-#     players_total = 0
-#     for cards in players_hand:
-#         players_total += cards[2]
-#     return players_total
-#
-# def dealers_score(dealers_hand):
-#     dealers_total = 0
-#     for cards in dealers_hand:
-#         dealers_total += cards[2]
-#     return dealers_total
-
-
 PLAYER_MONEY = "money.txt"
 def main():
     money = db.read_money(PLAYER_MONEY)
@@ -43,6 +44,10 @@ def main():
     players_hand = [deck.pop(), deck.pop()]
     display()
     bet = make_bet(money)
+    show_hand(dealers_hand)
+    player_cards(players_hand)
+    #need hit/stand here
+    dealers_cards(dealers_hand)
 
 
 
