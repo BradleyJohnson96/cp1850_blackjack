@@ -1,7 +1,15 @@
 import db
 import random
 
-PLAYER_MONEY = "money.txt"
+def display():
+    print("BLACKJACK!")
+    print("Blackjack payout is 3:2\n")
+
+def make_bet(money):
+    print(f"Money: {money}")
+    bet = float(input("Bet amount: "))
+    return bet
+
 def make_deck():
     suits = ["Clubs","Diamonds","Hearts","Spades"]
     ranks = ["Ace","Two","Three","Four","Five","Six","Seven",
@@ -14,12 +22,32 @@ def make_deck():
     random.shuffle(deck)
     return deck
 
+# def player_score(players_hand):
+#     players_total = 0
+#     for cards in players_hand:
+#         players_total += cards[2]
+#     return players_total
+#
+# def dealers_score(dealers_hand):
+#     dealers_total = 0
+#     for cards in dealers_hand:
+#         dealers_total += cards[2]
+#     return dealers_total
+
+
+PLAYER_MONEY = "money.txt"
 def main():
     money = db.read_money(PLAYER_MONEY)
     deck = make_deck()
+    dealers_hand = [deck.pop()]
+    players_hand = [deck.pop(), deck.pop()]
+    display()
+    bet = make_bet(money)
 
-    dealers_hand = []
-    players_hand = []
+
+
+
+
 
 if __name__=="__main__":
     main()
