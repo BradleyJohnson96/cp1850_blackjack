@@ -6,24 +6,32 @@ def display():
     print("Blackjack payout is 3:2\n")
 
 def make_bet(money):
-    print(f"Money: {money}")
+    print(f"Money: ${money}")
     if int(money) < 5:
-        more_chips = input("Would you like to by more chips? (y/n)?")
+        more_chips = input("Would you like to by more chips? (y/n)?: ")
         if more_chips.lower() == "y":
-            chips = int(input("How many chips would you like?"))
-            money = money + chips
+            chips = int(input("How many $ in chips would you like?: "))
+            money += chips
+            db.write_money(PLAYER_MONEY, str(money))
             return money
         else:
             pass
-
-    bet = float(input("Bet amount: "))
+    while True:
+        bet = float(input("Bet amount: "))
+        if bet > int(money):
+            print(f"You only have ${money} in chips, try again.")
+        else:
+            if bet < 5 or bet > 1000:
+                print("Bet must be from 5-1000")
+            else:
+                break
     return bet
 
 def hit_stand(deck,hands):
-    choice = input("Hit or Stand? (hit/stand): ")
+    choice = input("\nHit or Stand? (hit/stand): ")
     if choice.lower() == "hit":
         card = deck.pop()
-        hands.append(card)
+        hands[1].append(card)
     elif choice.lower() == "stand":
         pass
     else:
@@ -38,16 +46,17 @@ def player_cards(hands):
     for card in hands[1]:
         print(card)
 
-def dealers_cards(hands):
+def dealers_cards(deck,hands):
     print("\nDEALER'S CARDS: ")
-
+    card = deck.pop()
+    hands[0].append(card)
     for card in hands[0]:
         print(card)
 
 def make_deck():
     suits = ["Clubs","Diamonds","Hearts","Spades"]
-    ranks = ["Ace","Two","Three","Four","Five","Six","Seven",
-        "Eight","Nine","Ten","Jack","Queen","King"]
+    ranks = ["Ace","2","3","4","5","6","7",
+        "8","9","10","Jack","Queen","King"]
     point_value = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10] * 4
     deck = []
     for suit in suits:
@@ -68,8 +77,9 @@ def main():
         bet = make_bet(money)
         show_hand(hands)
         player_cards(hands)
-        #need hit/stand here
-        dealers_cards(hands)
+        hit_stand(deck,hands)
+        player_cards(hands)
+        dealers_cards(deck,hands)
         again = input("Play again? (y/n): ")
         if again.lower() == "n":
             break
