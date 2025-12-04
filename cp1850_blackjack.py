@@ -19,18 +19,29 @@ def make_bet(money):
     bet = float(input("Bet amount: "))
     return bet
 
-def show_hand(dealers_hand):
-    print("\nDEALER'S SHOW CARD:")
-    print(*dealers_hand)
+def hit_stand(deck,hands):
+    choice = input("Hit or Stand? (hit/stand): ")
+    if choice.lower() == "hit":
+        card = deck.pop()
+        hands.append(card)
+    elif choice.lower() == "stand":
+        pass
+    else:
+        print("Invalid choice, try again.")
 
-def player_cards(players_hand):
+def show_hand(hands):
+    print("\nDEALER'S SHOW CARD:")
+    print(*hands[0])
+
+def player_cards(hands):
     print("\nYOUR CARDS:")
-    for card in players_hand:
+    for card in hands[1]:
         print(card)
 
-def dealers_cards(dealers_hand):
+def dealers_cards(hands):
     print("\nDEALER'S CARDS: ")
-    for card in dealers_hand:
+
+    for card in hands[0]:
         print(card)
 
 def make_deck():
@@ -47,17 +58,23 @@ def make_deck():
 
 PLAYER_MONEY = "money.txt"
 def main():
-    money = db.read_money(PLAYER_MONEY)
-    deck = make_deck()
-    dealers_hand = [deck.pop()]
-    players_hand = [deck.pop(), deck.pop()]
-    display()
-    bet = make_bet(money)
-    show_hand(dealers_hand)
-    player_cards(players_hand)
-    #need hit/stand here
-    dealers_cards(dealers_hand)
-
+    while True:
+        money = db.read_money(PLAYER_MONEY)
+        deck = make_deck()
+        hands = [[deck.pop()],
+            [deck.pop(), deck.pop()]
+                 ]
+        display()
+        bet = make_bet(money)
+        show_hand(hands)
+        player_cards(hands)
+        #need hit/stand here
+        dealers_cards(hands)
+        again = input("Play again? (y/n): ")
+        if again.lower() == "n":
+            break
+    print("Come back soon!")
+    print("Bye")
 
 if __name__=="__main__":
     main()
