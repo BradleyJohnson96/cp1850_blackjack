@@ -77,12 +77,9 @@ def player_aces(hands):
             aces += 1
     return aces
 
-def player_value(p_aces,hands):
+def player_value(hands):
     total = 0
-    aces = 0
     for card in hands[1]:
-        if card[0] == "Ace":
-            aces += 1
         total += card[2]
     return total
 
@@ -93,7 +90,7 @@ def dealer_aces(hands):
             aces += 1
     return aces
 
-def dealer_value(d_aces,hands):
+def dealer_value(hands):
     total = 0
     for card in hands[0]:
         total += card[2]
@@ -116,24 +113,21 @@ def main():
         bet = make_bet(money)
         show_hand(hands)
         player_cards(hands)
-        #ace logic here
+        player_points = player_value(hands)
         while True:
+            if player_points > 21:
+                break
             if hit_stand(deck,hands) == True:
                 card = deck.pop()
                 hands[1].append(card)
                 player_cards(hands)
                 p_aces = player_aces(hands)
-                player_points = player_value(p_aces, hands)
-                if player_points < 11 and p_aces > 1:
-                    choice = input("Ace worth 1 or 11?")
-                    if choice == "1":
+                player_points = player_value(hands)
+                if player_points > 21:
+                    for i in range(p_aces):
                         player_points -= 10
-                        p_aces -= 1
-                    elif choice == "11":
-                        p_aces -= 1
-                else:
-                    player_points -= 10
-                    p_aces -= 1
+                        if player_points <= 21:
+                            break
                 print(player_points)
                 print(p_aces)
             else:
@@ -141,10 +135,10 @@ def main():
         if player_points <= 21:
             dealers_cards(deck,hands)
             d_aces = dealer_aces(hands)
-            dealer_points = dealer_value(d_aces,hands)
+            dealer_points = dealer_value(hands)
             while dealer_points < 17:
                 dealers_cards(deck, hands)
-                dealer_points = dealer_value(d_aces, hands)
+                dealer_points = dealer_value(hands)
             print()
             if dealer_points > 21:
                 print("Dealer bust. You win!")
@@ -171,11 +165,12 @@ def main():
                     print(f"Money: {round(money,2)}")
                     db.write_money(PLAYER_MONEY, str(money))
         elif player_points > 21:
-            print("Sorry. You lose.")
+            print("Sorry you bust. You lose.")
             money -= bet
             print(f"Money: {round(money, 2)}")
             db.write_money(PLAYER_MONEY, str(money))
         again = input("\nPlay again? (y/n): ")
+        print()
         if again.lower() == "n":
             break
     print("Come back soon!")
