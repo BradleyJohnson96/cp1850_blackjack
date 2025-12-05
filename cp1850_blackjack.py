@@ -1,5 +1,6 @@
 import db
 import random
+import sys
 
 def display():
     print("BLACKJACK!")
@@ -29,29 +30,33 @@ def make_bet(money):
 
 def hit_stand(deck,hands):
     while True:
-        choice = input("\nHit or Stand? (hit/stand): ")
-        if choice.lower() == "hit":
-            return True
-        elif choice.lower() == "stand":
-            return False
-        else:
-            print("Invalid choice, try again.")
+        try:
+            choice = input("\nHit or Stand? (hit/stand): ")
+            if choice.lower() == "hit":
+                return True
+            elif choice.lower() == "stand":
+                return False
+            else:
+                print("Invalid choice, try again.")
+        except ValueError:
+            print("You must type hit/stand. Try again.")
 
 def show_hand(hands):
     print("\nDEALER'S SHOW CARD:")
-    print(*hands[0])
+    for card in hands[0]:
+        print(f"{card[0]} of {card[1]}")
 
 def player_cards(hands):
     print("\nYOUR CARDS:")
     for card in hands[1]:
-        print(card)
+        print(f"{card[0]} of {card[1]}")
 
 def dealers_cards(deck,hands):
     print("\nDEALER'S CARDS: ")
     card = deck.pop()
     hands[0].append(card)
     for card in hands[0]:
-        print(card)
+        print(f"{card[0]} of {card[1]}")
 
 def make_deck():
     suits = ["Clubs","Diamonds","Hearts","Spades"]
@@ -61,17 +66,48 @@ def make_deck():
     deck = []
     for suit in suits:
         for rank,point in zip(ranks,point_value):
-            deck.append(f"{rank} of {suit}")
+            deck.append([rank,suit,point])
     random.shuffle(deck)
     return deck
 
-def card_value(hands):
-    pass
+def player_aces(hands):
+    aces = 0
+    for card in hands[1]:
+        if card[0] == "Ace":
+            aces += 1
+    return aces
+
+def player_value(p_aces,hands):
+    total = 0
+    aces = 0
+    for card in hands[1]:
+        if card[0] == "Ace":
+            aces += 1
+        total += card[2]
+    return total
+
+def dealer_aces(hands):
+    aces = 0
+    for card in hands[1]:
+        if card[0] == "Ace":
+            aces += 1
+    return aces
+
+def dealer_value(d_aces,hands):
+    total = 0
+    for card in hands[0]:
+        total += card[2]
+    return total
 
 PLAYER_MONEY = "money.txt"
 def main():
     while True:
-        money = db.read_money(PLAYER_MONEY)
+        try:
+            money = db.read_money(PLAYER_MONEY)
+        except FileNotFoundError as e:
+            print(e)
+            print("Could not find datafile. Closing program")
+            sys.exit()
         deck = make_deck()
         hands = [[deck.pop()],
             [deck.pop(), deck.pop()]
@@ -80,14 +116,23 @@ def main():
         bet = make_bet(money)
         show_hand(hands)
         player_cards(hands)
+        p_aces = player_aces(hands)
+        player_points = player_value(p_aces,hands)
+        print(player_points)
         while True:
             if hit_stand(deck,hands) == True:
                 card = deck.pop()
                 hands[1].append(card)
                 player_cards(hands)
+                p_aces = player_aces(hands)
+                player_points = player_value(p_aces, hands)
+                print(player_points)
+                print(p_aces)
             else:
                 break
         dealers_cards(deck,hands)
+        d_aces = dealer_aces(hands)
+        dealer_value(d_aces,hands)
         again = input("Play again? (y/n): ")
         if again.lower() == "n":
             break
