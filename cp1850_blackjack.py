@@ -116,9 +116,7 @@ def main():
         bet = make_bet(money)
         show_hand(hands)
         player_cards(hands)
-        p_aces = player_aces(hands)
-        player_points = player_value(p_aces,hands)
-        print(player_points)
+        #ace logic here
         while True:
             if hit_stand(deck,hands) == True:
                 card = deck.pop()
@@ -126,6 +124,16 @@ def main():
                 player_cards(hands)
                 p_aces = player_aces(hands)
                 player_points = player_value(p_aces, hands)
+                if player_points < 11 and p_aces > 1:
+                    choice = input("Ace worth 1 or 11?")
+                    if choice == "1":
+                        player_points -= 10
+                        p_aces -= 1
+                    elif choice == "11":
+                        p_aces -= 1
+                else:
+                    player_points -= 10
+                    p_aces -= 1
                 print(player_points)
                 print(p_aces)
             else:
