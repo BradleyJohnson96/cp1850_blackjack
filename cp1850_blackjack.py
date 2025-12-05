@@ -28,14 +28,14 @@ def make_bet(money):
     return bet
 
 def hit_stand(deck,hands):
-    choice = input("\nHit or Stand? (hit/stand): ")
-    if choice.lower() == "hit":
-        card = deck.pop()
-        hands[1].append(card)
-    elif choice.lower() == "stand":
-        pass
-    else:
-        print("Invalid choice, try again.")
+    while True:
+        choice = input("\nHit or Stand? (hit/stand): ")
+        if choice.lower() == "hit":
+            return True
+        elif choice.lower() == "stand":
+            return False
+        else:
+            print("Invalid choice, try again.")
 
 def show_hand(hands):
     print("\nDEALER'S SHOW CARD:")
@@ -65,6 +65,9 @@ def make_deck():
     random.shuffle(deck)
     return deck
 
+def card_value(hands):
+    pass
+
 PLAYER_MONEY = "money.txt"
 def main():
     while True:
@@ -77,8 +80,13 @@ def main():
         bet = make_bet(money)
         show_hand(hands)
         player_cards(hands)
-        hit_stand(deck,hands)
-        player_cards(hands)
+        while True:
+            if hit_stand(deck,hands) == True:
+                card = deck.pop()
+                hands[1].append(card)
+                player_cards(hands)
+            else:
+                break
         dealers_cards(deck,hands)
         again = input("Play again? (y/n): ")
         if again.lower() == "n":
