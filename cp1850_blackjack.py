@@ -130,10 +130,44 @@ def main():
                 print(p_aces)
             else:
                 break
-        dealers_cards(deck,hands)
-        d_aces = dealer_aces(hands)
-        dealer_value(d_aces,hands)
-        again = input("Play again? (y/n): ")
+        if player_points <= 21:
+            dealers_cards(deck,hands)
+            d_aces = dealer_aces(hands)
+            dealer_points = dealer_value(d_aces,hands)
+            while dealer_points < 17:
+                dealers_cards(deck, hands)
+                dealer_points = dealer_value(d_aces, hands)
+            print()
+            if dealer_points > 21:
+                print("Dealer bust. You win!")
+                money += bet
+                print(f"Money: {round(money, 2)}")
+                db.write_money(PLAYER_MONEY, str(money))
+            elif dealer_points == player_points:
+                print("Game is a tie. Returning bet.")
+                print(f"Money: {round(money, 2)}")
+            elif dealer_points > player_points:
+                print("Sorry. You lose.")
+                money -= bet
+                print(f"Money: {round(money, 2)}")
+                db.write_money(PLAYER_MONEY, str(money))
+            elif dealer_points < player_points :
+                if player_points == 21:
+                    print("BLACKJACK")
+                    print("You win! 1.5x bet amount")
+                    money += bet * 1.5
+                    print(f"Money: {round(money, 2)}")
+                else:
+                    print("You win!")
+                    money += bet
+                    print(f"Money: {round(money,2)}")
+                    db.write_money(PLAYER_MONEY, str(money))
+        elif player_points > 21:
+            print("Sorry. You lose.")
+            money -= bet
+            print(f"Money: {round(money, 2)}")
+            db.write_money(PLAYER_MONEY, str(money))
+        again = input("\nPlay again? (y/n): ")
         if again.lower() == "n":
             break
     print("Come back soon!")
