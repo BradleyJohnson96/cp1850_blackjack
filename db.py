@@ -8,5 +8,8 @@ def read_money(PLAYER_MONEY):
 
 
 def write_money(PLAYER_MONEY,money):
-    with open(PLAYER_MONEY, "w") as file:
-        file.write(money)
+    try:
+        with open(PLAYER_MONEY, "w") as file:
+            file.write(money)
+    except FileNotFoundError:
+        print("Player money file not found!")
